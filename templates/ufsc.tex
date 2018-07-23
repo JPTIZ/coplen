@@ -1,0 +1,115 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+
+\usepackage[inline]{enumitem}
+
+\usepackage{hyperref}
+\usepackage{listing}
+
+\title{\VAR{lang['main-title']} \VAR{course.kind.title()}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{\VAR{lang['sections']['about']}}
+
+\begin{itemize}
+    \item[] Disciplina: \VAR{course.title.title()}
+    \item[]
+        \hspace{-1em}
+        \begin{tabular}{ccc}
+            Carga Horária: \VAR{course.hours['theoretical'] +
+                                course.hours['practice']} horas-aula&
+            Teóricas: \VAR{course.hours['theoretical']} &
+            Práticas: \VAR{course.hours['practice']}
+        \end{tabular}
+    \item[] Período: \VAR{lang['months'][course.start]} a \VAR{lang['months'][course.end]} de
+                     \VAR{course.year}.
+\end{itemize}
+
+\section{Cursos (público alvo)}
+\begin{itemize}
+%% for target, more in course.targets|lookahead
+  %% if more
+    \item[] \VAR{target};
+  %% else
+    \item[] \VAR{target}.
+  %% endif
+%% endfor
+\end{itemize}
+
+\section{Requisitos}
+\begin{itemize}
+%% for req, more in course.requires|lookahead
+  %% if more
+    \item[] \VAR{req};
+  %% else
+    \item[] \VAR{req}.
+  %% endif
+%% endfor
+\end{itemize}
+
+\section{Ementa}
+\begin{itemize*}[label={}]
+%% for topic, more_topics in course.topics|lookahead
+  %% for item, more_items in topic.items|lookahead
+    %% if more_topics and more_items
+    \item[] \VAR{item};
+    %% else
+    \item[] \VAR{item}.
+    %% endif
+  %% endfor
+%% endfor
+\end{itemize*}
+
+\section{Objetivos}
+
+\begin{description}
+    \item[Geral:] \VAR{course.goals['general']}.
+    \item[Específico:] São objetivos do \VAR{course.kind.lower()}:
+        \begin{itemize}[label={-}]
+        %% for item, more in course.goals['specific']|lookahead
+        %%  if more
+            \item \VAR{item};
+        %%  else
+            \item \VAR{item}.
+        %%  endif
+        %% endfor
+        \end{itemize}
+\end{description}
+
+\section{Conteúdo Programático}
+
+\begin{enumerate}
+%% for topic in course.topics
+    \item \VAR{topic.title} (\VAR{topic.duration} hora\VAR{'s' if topic.duration > 0 else ''}):
+        \begin{samepage}
+            \begin{enumerate}
+            %% for item, more in topic.items|lookahead
+            %%  if more
+                \item \VAR{item};
+            %%  else
+                \item \VAR{item}.
+            %%  endif
+            %% endfor
+            \end{enumerate}
+        \end{samepage}
+%% endfor
+\end{enumerate}
+
+\section{Cronograma}
+\VAR{'\n'.join(course.schedule)}
+
+\nocite{*}
+\bibliographystyle{unsrt}
+%% for reference in course.references
+\bibliography{\VAR{reference}}
+%% endfor
+
+\end{document}
