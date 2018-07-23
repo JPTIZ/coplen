@@ -102,3 +102,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# Generated
+examples/*.aux
+examples/*.bbl
+examples/*.blg
+examples/*.out
+examples/*.pdf
+examples/*.tex
+

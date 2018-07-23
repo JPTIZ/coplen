@@ -1,0 +1,43 @@
+{
+    "kind": "minicurso",
+    "title": "Minicurso de Exemplo",
+    "hours": {
+        "theoretical": 2,
+        "practice": 2
+    },
+    "start": 3,
+    "end": 5,
+    "year": 2018,
+    "targets": [
+        "Ciência da Computação",
+        "Sistemas de Informação"
+    ],
+    "requires": [
+        "Nenhum."
+    ],
+    "goals": {
+        "general": "Servir de exemplo de um plano de ensino.",
+        "specific": [
+            "Ter vários objetivos específicos",
+            "Para demonstrar como dá para colocar eles separados",
+            "Que o gerador entenderá  como diferentes itens do plano de ensino",
+            ["Inclusive, se for um item muito grande,",
+             " é possível quebrá-lo em uma lista de strings JSON",
+             " para poder deixar o arquivo mais legível"]
+        ]
+    },
+    "topics": {
+        "Tópico de exemplo": {
+            "duration": 2,
+            "items": [
+                "Ter duração especificada",
+                "Demonstrar o uso de ítens nos tópicos"
+            ]
+        }
+    },
+    "schedule": [
+        "Neste exemplo, o cronograma segue a mesma ordenação do Conteúdo",
+        " Programático, sendo cada item uma aula separada."
+    ],
+    "references": ["references.bib"]
+}
