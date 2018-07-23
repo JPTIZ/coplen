@@ -7,6 +7,11 @@ About
 **Co**urse **Pl**an G**en**erator, used to generate course plans with given
 template file.
 
+Simple Example
+--------------
+
+A simple example is [here](examples/plan.pdf), to see how it was generated.
+
 Basic Usage
 -----------
 
@@ -26,6 +31,10 @@ optional arguments:
   --output OUTPUT
   --template TEMPLATE
 ```
+
+The **language** comes from a [JSON file](langs/pt-br.json), for translation
+purposes. **Template** is a [template file](templates/ufsc.tex) in whatever
+format you may want, including TEX, using default Jinja2 syntax.
 
 So, using `examples/plan.json` as an example:
 
