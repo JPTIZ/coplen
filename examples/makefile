@@ -1,6 +1,6 @@
 OBJS   := plan.pdf
 LATEX  := xelatex
-BIBREF := references
+BIBREF := refs
 
 all: $(OBJS)
 
@@ -12,5 +12,10 @@ all: $(OBJS)
 
 .PHONY: clean
 
-clean:
-	rm -f *.{aux,bbl,blg,pdf,log}
+clean: clean-temp clean-pdf
+
+clean-temp:
+	rm -f *.{tex,out,aux,bbl,blg,log}
+
+clean-pdf:
+	rm -f *.pdf
