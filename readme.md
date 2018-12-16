@@ -32,9 +32,10 @@ optional arguments:
   --template TEMPLATE
 ```
 
-The **language** comes from a [JSON file](langs/pt-br.json), for translation
-purposes. **Template** is a [template file](templates/ufsc.tex) in whatever
-format you may want, including TEX, using default Jinja2 syntax.
+The **language** comes from a [JSON file](coplen/langs/pt-br.json), for
+translation purposes. **Template** is a
+[template file](coplen/templates/ufsc.tex) in whatever format you may want,
+including TEX, using default Jinja2 syntax.
 
 So, using `examples/plan.json` as an example:
 

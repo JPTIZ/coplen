@@ -1,5 +1,6 @@
 '''Course plan generator library.'''
 import json
+import os.path as path
 from enum import Enum
 from os.path import abspath
 from typing import NamedTuple, List, Dict
@@ -95,7 +96,7 @@ def from_json(filename: str):
         targets=data['targets'],
         requires=data['requires'],
         goals=Goals(
-            general=data['goals']['general'],
+            general=multiline_str(data['goals']['general']),
             specific=map(multiline_str, data['goals']['specific']),
         ),
         topics=[
@@ -111,12 +112,13 @@ def from_json(filename: str):
 
 def generate(course,
              template,
-             lang='pt-br',
+             lang='langs/pt-br.json',
              output: str = 'output.tex'):
     '''Generates course plan with given template.'''
-    with open(f'langs/{lang}.json') as f:
+    with open(lang) as f:
         lang = json.load(f)
 
+    template_path, template_file = path.split(template)
     latex_env = Environment(
                     block_start_string='\BLOCK{',
                     block_end_string='}',
@@ -128,10 +130,12 @@ def generate(course,
                     line_comment_prefix='%#',
                     trim_blocks=True,
                     autoescape=False,
-                    loader=FileSystemLoader(abspath('.'))
+                    loader=FileSystemLoader(
+                        [f'{path.dirname(__file__)}/templates',
+                         abspath(template_path)])
                 )
     latex_env.filters['lookahead'] = lookahead
 
-    print('Generating TeX...')
-    template = latex_env.get_template(template)
+    print(f'Generating {output}...')
+    template = latex_env.get_template(template_file)
     save(template.render(course=course, lang=lang), output)
