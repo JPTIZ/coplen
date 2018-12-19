@@ -40,7 +40,7 @@ including TEX, using default Jinja2 syntax.
 So, using `examples/plan.json` as an example:
 
 ```bash
-$ python -m coplen --template templatex/ufsc.tex --output examples/plan.tex examples/plan.json
+$ python -m coplen --template coplen/templates/ufsc.tex --output examples/plan.tex examples/plan.json
 ```
 
 In `examples/` directory, there is a `makefile` to generate the plan PDF:
