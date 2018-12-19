@@ -8,5 +8,5 @@ setup(name='coplen',
       author_email='jpaulotiz@gmail.com',
       url='https://github.com/jptiz/coplen',
       packages=find_packages(),
-      install_requires=['carl', 'jinja2'],
+      install_requires=['carl', 'jinja2', 'pytoml'],
       )

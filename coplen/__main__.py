@@ -1,30 +1,35 @@
-'''TODO'''
-import os.path
+'''Coplen's main module for CLI execution.'''
+from pathlib import Path
 
 import coplen.course as course
 from carl import command
 
 
-def package_dir():
-    return os.path.dirname(__file__)
+def package_dir() -> Path:
+    return Path(__file__).parent
 
 
-def default_lang_file():
-    return f'{package_dir()}/langs/pt-br.json'
+def default_lang_file() -> Path:
+    return Path(f'{package_dir()}/langs/pt-br.json')
 
 
 @command
-def generate(input_file: str,
-             language: str = default_lang_file(),
-             output: str = 'plan.tex',
-             template: str = f'{package_dir()}/templates/ufsc.tex'):
+def generate(input_file: Path,
+             language: Path = default_lang_file(),
+             output: Path = 'plan.tex',
+             template: Path = f'{package_dir()}/templates/ufsc.tex'):
+    loader = {
+        '.json': course.from_json,
+        '.toml': course.from_toml,
+    }[input_file.suffix]
 
     course.generate(
-        course=course.from_json(input_file),
+        course=loader(input_file),
         lang=language,
         output=output,
         template=template,
     )
 
 
-generate.run()
+if __name__ == '__main__':
+    generate.run()

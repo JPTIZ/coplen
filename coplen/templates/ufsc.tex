@@ -25,12 +25,17 @@
         \hspace{-1em}
         \begin{tabular}{ccc}
             Carga Horária: \VAR{course.hours['theoretical'] +
-                                course.hours['practice']} horas-aula&
+                                course.hours['practice']} horas-aula &
             Teóricas: \VAR{course.hours['theoretical']} &
             Práticas: \VAR{course.hours['practice']}
         \end{tabular}
-    \item[] Período: \VAR{lang['months'][course.start]} a \VAR{lang['months'][course.end]} de
-                     \VAR{course.year}.
+    \item[] Período:
+    %% if course.start != course.end
+        \VAR{lang['months'][course.start]} a \VAR{lang['months'][course.end]}
+        de \VAR{course.year}.
+    %% else
+        \VAR{lang['months'][course.start]} de \VAR{course.year}.
+    %% endif
 \end{itemize}
 
 \section{Cursos (público alvo)}
@@ -71,8 +76,8 @@
 \section{Objetivos}
 
 \begin{description}
-    \item[Geral:] \VAR{course.goals['general']}.
-    \item[Específico:] São objetivos do \VAR{course.kind.lower()}:
+    \item[Geral:] \VAR{course.goals['general']}
+    \item[Específico:] São objetivos \VAR{'do' if course.kind == 'minicurso' else 'da'} \VAR{course.kind.lower()}:
         \begin{itemize}[label={-}]
         %% for item, more in course.goals['specific']|lookahead
         %%  if more
@@ -88,7 +93,7 @@
 
 \begin{enumerate}
 %% for topic in course.topics
-    \item \VAR{topic.title} (\VAR{topic.duration} hora\VAR{'s' if topic.duration > 0 else ''}):
+    \item \VAR{topic.title} (\VAR{topic.duration} hora\VAR{'s' if topic.duration > 1 else ''}):
         \begin{samepage}
             \begin{enumerate}
             %% for item, more in topic.items|lookahead
@@ -103,8 +108,10 @@
 %% endfor
 \end{enumerate}
 
+%% if course.schedule
 \section{Cronograma}
 \VAR{'\n'.join(course.schedule)}
+%% endif
 
 \nocite{*}
 \bibliographystyle{unsrt}

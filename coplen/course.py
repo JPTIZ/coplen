@@ -1,11 +1,15 @@
 '''Course plan generator library.'''
 import json
-import os.path as path
+import re
 from enum import Enum
-from os.path import abspath
-from typing import NamedTuple, List, Dict
+from pathlib import Path
+from typing import NamedTuple, List, Dict, TypeVar
 
+import pytoml as toml
 from jinja2 import Environment, FileSystemLoader
+
+
+MultilineString = TypeVar('MultilineString', str, List[str])
 
 
 class Month(Enum):
@@ -67,25 +71,39 @@ def lookahead(iterable):
     yield prev, False
 
 
-def save(text, output):
+def save(text: str, output: Path):
     with open(output, 'w') as f:
         f.write(text)
 
 
-def multiline_str(original):
+def multiline_str(original: MultilineString) -> str:
     '''
     If original is a list of strings, then joins them. If not, just return
-    it imediatly.
+    it imediatly calling `str` on it.
     '''
-    if isinstance(original, str):
-        return original
-    return ''.join(original)
+    if isinstance(original, List):
+        return ''.join(original)
+    return str(original)
 
 
-def from_json(filename: str):
-    '''Creates a `coplen.Course` instance from a given json file.'''
-    with open(filename) as f:
+def mdfy(text: str) -> str:
+    SUBS = [
+        (r'_(.*?)_', r'\\textit{\1}'),
+        (r'\*(.*?)\*', r'\\textbf{\1}'),
+        (r'`(.*?)`', r'\\texttt{\1}'),
+    ]
+
+    for pattern, replace in SUBS:
+        text = re.sub(pattern, replace, text)
+
+    return text
+
+
+def from_json(path: Path) -> Course:
+    '''Creates a `coplen.Course` instance from a given JSON file.'''
+    with open(path) as f:
         data = json.load(f)
+
     return Course(
         kind=data['kind'],
         title=data['title'],
@@ -110,15 +128,51 @@ def from_json(filename: str):
     )
 
 
+def from_toml(path: Path) -> Course:
+    '''Creates a `coplen.Course` instance from a given TOML file.'''
+    with open(path) as f:
+        data = toml.load(f)
+
+    about = data['about']
+    duration = data['duration']
+    topics = data['topics']
+    goals = data['goals']
+    schedule = data.get('schedule', about.get('schedule', None))
+
+    for topic in topics:
+        topic['items'] = [mdfy(item) for item in topic['items']]
+
+    goals = Goals(
+        general=multiline_str(goals['general']),
+        specific=map(mdfy, map(multiline_str, goals['specific'])),
+    )
+
+    return Course(
+        kind=about['kind'],
+        title=about['title'],
+        hours={'theoretical': duration['theoretical'],
+               'practice': duration['practice']},
+        start=str(duration['start-month']),
+        end=str(duration['end-month']),
+        year=duration['year'],
+        targets=about['targets'],
+        requires=about['requires'],
+        goals=goals,
+        topics=[
+            Topic(**topic) for topic in topics],
+        schedule=schedule,
+        references=about.get('references', ''),
+    )
+
+
 def generate(course,
-             template,
+             template: Path,
              lang='langs/pt-br.json',
              output: str = 'output.tex'):
     '''Generates course plan with given template.'''
     with open(lang) as f:
         lang = json.load(f)
 
-    template_path, template_file = path.split(template)
     latex_env = Environment(
                     block_start_string='\BLOCK{',
                     block_end_string='}',
@@ -131,11 +185,11 @@ def generate(course,
                     trim_blocks=True,
                     autoescape=False,
                     loader=FileSystemLoader(
-                        [f'{path.dirname(__file__)}/templates',
-                         abspath(template_path)])
+                        [f'{Path(__file__).parent}/templates',
+                         template.parent.resolve()])
                 )
     latex_env.filters['lookahead'] = lookahead
 
     print(f'Generating {output}...')
-    template = latex_env.get_template(template_file)
+    template = latex_env.get_template(template.name)
     save(template.render(course=course, lang=lang), output)
