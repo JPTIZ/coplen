@@ -184,12 +184,17 @@ def generate(course,
                     line_comment_prefix='%#',
                     trim_blocks=True,
                     autoescape=False,
-                    loader=FileSystemLoader(
-                        [f'{Path(__file__).parent}/templates',
-                         template.parent.resolve()])
+                    loader=FileSystemLoader([
+                            template.parent.resolve(),
+                            f'{Path(__file__).parent}/templates',
+                        ])
                 )
     latex_env.filters['lookahead'] = lookahead
 
-    print(f'Generating {output}...')
+    print(
+        f'Generating {output}...\n'
+        f'    Template: {template.resolve()}'
+    )
+
     template = latex_env.get_template(template.name)
     save(template.render(course=course, lang=lang), output)
